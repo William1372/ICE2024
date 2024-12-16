@@ -1,4 +1,3 @@
-import javax.xml.crypto.Data;
 import java.sql.Connection;
 
 public class Main {
@@ -12,7 +11,6 @@ public class Main {
             DatabaseHandler.createGoalTable(conn);
             DatabaseHandler.createChallengeTable(conn);
             cphFitness.startMenu();
-
         }
     }
 }

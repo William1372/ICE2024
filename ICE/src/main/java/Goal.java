@@ -22,7 +22,7 @@ public class Goal {
     @Override
     public String toString() {
         if (minutes == 0) {
-            return progress + " km out of " + distance + " km";
+            return progress + " meters out of " + distance + " meters";
         } else if (distance == 0)
             return (int) progress + " min out " + minutes + " min";
             return (int) progress + " min out of " + minutes + " min for " + distance + " m";

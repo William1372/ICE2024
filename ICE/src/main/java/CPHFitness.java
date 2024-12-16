@@ -25,7 +25,10 @@ public class CPHFitness {
 
     public void startMenu(){
         String bold = "\u001B[1m";
-        int choice = ui.promptNumeric(bold+"\uD83C\uDFC3\u200D♀\uFE0F\u200D➡\uFE0F\uD83C\uDFC3\u200D♂\uFE0F\u200D➡\uFE0FWelcome to CPHFitness! \uD83D\uDCAA \n"+"1) Log in\n"+"2) Sign up\n"+"3) Exit app");
+        int choice = ui.promptNumeric("\uD83C\uDFC3\u200D♀\uFE0F\u200D➡\uFE0F\uD83C\uDFC3\u200D♂\uFE0F\u200D➡\uFE0F \033[4mWelcome to CPH Fitness\033[0m \uD83D\uDCAA \n" +
+                "1) Log in\n"+
+                "2) Sign up\n"+
+                "3) Exit app");
         switch(choice){
             case 1:
                 userLogin();
@@ -45,17 +48,18 @@ public class CPHFitness {
 
     public void mainMenu() {
         int choice = ui.promptNumeric("You have the following options: \n " +
-                "1) Add a run➕\uD83C\uDFC3\u200D♀\uFE0F\u200D➡\uFE0F\uD83C\uDFC3\u200D➡\uFE0F \n " +
-                "2) Add a goal➕\uD83E\uDD45\uD83D\uDCCC \n " +
-                "3) View previous runs\uD83D\uDDFA\uFE0F \n " +
-                "4) View your current training plan or choose a new one\uD83D\uDCAA\uD83D\uDC40 \n " +
-                "5) View your current challenge or choose a new one\uD83D\uDCC6\uD83D\uDC40 \n " +
-                "6) View your goals\uD83E\uDD45\uD83D\uDC40 \n " +
-                "7) Edit your goals\uD83E\uDD45 \n " +
-                "8) View leaderboard\uD83D\uDCCA⚖\uFE0F\uD83D\uDC40 \n " +
-                "9) View your achievements\uD83C\uDFC6\uD83C\uDF96\uFE0F \n " +
-                "10) Edit profile\uD83E\uDDEC \n " +
-                "11) Exit program❌");
+                "1) Add a run ➕\uD83C\uDFC3\u200D♀\uFE0F\u200D➡\uFE0F\uD83C\uDFC3\u200D➡\uFE0F \n " +
+                "2) Add a goal ➕\uD83E\uDD45\uD83D\uDCCC \n " +
+                "3) View previous runs \uD83D\uDDFA\uFE0F \n " +
+                "4) View your current training plan or choose a new one \uD83D\uDCAA\uD83D\uDC40 \n " +
+                "5) View your current challenge or choose a new one \uD83D\uDCC6\uD83D\uDC40 \n " +
+                "6) View your goals \uD83E\uDD45\uD83D\uDC40 \n " +
+                "7) Edit your goals \uD83E\uDD45 \n " +
+                "8) View leaderboard \uD83D\uDCCA⚖\uFE0F\uD83D\uDC40 \n " +
+                "9) View your achievements \uD83C\uDFC6\uD83C\uDF96\uFE0F \n " +
+                "10) Edit profile \uD83E\uDDEC \n " +
+                "11) Log out ❌\n " +
+                "12) Exit program ❌");
 
         switch (choice) {
             case 1:
@@ -73,7 +77,6 @@ public class CPHFitness {
                 break;
             case 4:
                 ui.displayMsg("❌The 'trainingplan' feature is currently unavailable!");
-                //currentUser.viewTrainingPlanList;   // Metode findes ikke endnu
                 mainMenu();
             case 5:
                 if(!currentUser.getCurrentChallenges().isEmpty()) {
@@ -97,7 +100,6 @@ public class CPHFitness {
                 mainMenu();
             case 7:
                 ui.displayMsg("❌The 'edit goals' feature is currently unavailable!");
-                // metode til at slette mål
                 mainMenu();
                 break;
             case 8:
@@ -106,7 +108,6 @@ public class CPHFitness {
                 break;
             case 9:
                 ui.displayMsg("❌The 'achievements' feature is currently unavailable!");
-                //achievement.viewAchievements(); ikke implementeret endnu
                 mainMenu();
                 break;
             case 10:
@@ -114,6 +115,8 @@ public class CPHFitness {
                 mainMenu();
                 break;
             case 11:
+                logOut();
+            case 12:
                 ui.displayMsg("Exiting the program. Goodbye!\uD83D\uDC4B");
                 exitProgram();
             default:
@@ -124,16 +127,16 @@ public class CPHFitness {
 
     public void createGoal() {
         int choice = ui.promptNumeric("You have the following options: \n " +
-                "1) Add untimed distance-based goal (e.g 50 km)\uD83D\uDDFA\uFE0F\n " +
-                "2) Add timed distance-based goal (e.g 10 km under 60 minutes)⏳\uD83D\uDDFA\uFE0F\n " +
+                "1) Add untimed distance-based goal (e.g 5.000 meters)\uD83D\uDDFA\uFE0F\n " +
+                "2) Add timed distance-based goal (e.g 10.000 meters under 60 minutes)⏳\uD83D\uDDFA\uFE0F\n " +
                 "3) Add timed non-distance based goal (e.g 30 minutes)⏳\n " +
                 "4) Return to Main Menu⬅\uFE0F");
 
         switch(choice){
             case 1:
-                float goal1 = ui.promptNumeric("Enter distance in kilometers:");
+                float goal1 = ui.promptNumeric("Enter distance in meters:");
                 currentUser.addGoal(new Goal(goal1, 0));
-                ui.displayMsg("You just added : " + goal1 + " km to your goals. Good luck!\uD83D\uDE04");
+                ui.displayMsg("You just added : " + goal1 + " meters to your goals. Good luck!\uD83D\uDE04");
                 Goal goalObj1 = new Goal(goal1, 0);
                 DatabaseHandler.saveGoal(currentUser, goalObj1);
                 mainMenu();
@@ -220,7 +223,7 @@ public class CPHFitness {
             System.out.println("❌Username already exists. Please choose another.");
             registerUser();
         } else {
-            System.out.println("Username is available!");
+            System.out.println("✅Username is available!");
         }
         String password = ui.promptText("\uD83E\uDEE3 Enter your password:");
         int age = ui.promptNumeric("\uD83D\uDC74 \uD83D\uDC75 Enter your age:");
@@ -239,7 +242,7 @@ public class CPHFitness {
         } catch (SQLException e) {
             ui.displayMsg("❌Error retrieving user ID after registration: " + e.getMessage());
         }
-        ui.displayMsg("User registered successfully! ✅");
+        ui.displayMsg("✅User registered successfully!");
         mainMenu();
         return user;
     }
@@ -283,14 +286,18 @@ public class CPHFitness {
         }
         float distance = ui.promptNumeric("\uD83D\uDCCFEnter the distance in meters:");
         int totalMin = hours*60 + minutes;
-        DatabaseHandler.updateDistanceGoals(currentUser,distance/1000);
+        DatabaseHandler.updateDistanceGoals(currentUser,distance);
         DatabaseHandler.updateTimeGoals(currentUser, totalMin);
         DatabaseHandler.updateDualGoals(currentUser, totalMin, distance);
         Run run = new Run(hours, minutes, seconds, distance, date);
         DatabaseHandler.saveRun(currentUser, run);
         ui.displayMsg("You just added the run " + run + " to your running log. Good work!\uD83E\uDD29\uD83D\uDC4C");
         ui.displayMsg(achievement.checkRunDistance(distance));
+    }
 
+    public void logOut(){
+        userLogin();
+        mainMenu();
     }
 
     public void exitProgram(){
