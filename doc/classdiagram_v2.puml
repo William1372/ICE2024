@@ -1,0 +1,116 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+!pragma layout smetana
+
+class Main{
+{static}+ static void main(String [] args)
+
+- CPHFitness cphFitness
+
+}
+
+class CPHFitness{
+- Connection connection
+- User currentUser
+- TrainingPlansList trainingPlansList
+- ChallengesList challengesList
+- Leaderboard leaderboard
+
++ void startMenu()
++ void mainMenu()
++ void createGoal()
++ void userLogin()
++ User registerUser()
++ void exitProgram()
+}
+
+class DatabaseHandler {
++ final String DB_URL
+- {static} Connection connection
++ {static} Connection connect()
++ {static} void createRunningLogTable(Connection conn)
++ {static} void createGoalTable(Connection conn)
++ {static} void createChallengeTable (Connection conn)
++ {static} void createUserTable(Connection conn)
++ {static} void saveUser(User user)
++ {static} void saveRun(User user, Run run)
++ {static} void saveGoal (User user, Goal goal)
+
+}
+
+
+
+class User{
++ User (String, String, int, int, int)
+- String username
+- String password
+- int age
+- int height
+- int weight
+- ArrayList <Run> runningLog
++ void viewRunningLog()
+}
+
+class Run{
++ Run(int, int, int, float, String)
++ Run(int, int, int, float)
+- int hours
+- int minutes
+- int seconds
+- float distance
+- String date
+}
+
+class ChallengesList{
+- ArrayList <Challenge> AllChallengesList
++ viewAllChallenges()
+}
+
+class TrainingPlansList{
+- ArrayList <TrainingPlan> trainingPlansList
+}
+
+class Goal {
+ - float distanceInKm;
+ - float distanceProgress;
+ - int minutes;
+ + Goal (float distanceInKm, float distanceProgress)
+ + Goal (float distanceInKm, int minutes, float distanceProgress)
+}
+
+class Challenge {
+- String name
+- double distance
+- int time
+
++ Challenge (String name, double distance, int time)
+}
+
+class TrainingPlan {
+
+}
+
+class Leaderboard{
++ void viewLeaderboard()
+}
+
+Main *-- CPHFitness
+Main *-- DatabaseHandler
+
+CPHFitness *-- User : has-a
+CPHFitness *-- Leaderboard : has-a
+CPHFitness *-- ChallengesList
+CPHFitness *-- TrainingPlansList
+CPHFitness *-- DatabaseHandler
+
+ChallengesList *-- Challenge
+TrainingPlansList *-- TrainingPlan
+
+User *-- Goal
+User *-- Challenge
+User *-- TrainingPlan
+User *-- Run
+Challenge *-- Run
+TrainingPlan *-- Run
+
+@enduml
