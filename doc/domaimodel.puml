@@ -1,0 +1,35 @@
+@startuml
+!pragma layout smetana
+'https://plantuml.com/sequence-diagram
+
+object CPHFitness
+object User
+object Run
+object Goal
+object Challenge
+object TrainingPlan
+object Leaderboard
+object RunningLog
+object ChallengesList
+object TrainingPlansList
+
+CPHFitness *-- User : has-a
+CPHFitness *-- Leaderboard : has-a
+CPHFitness *-- ChallengesList
+CPHFitness *-- TrainingPlansList
+
+ChallengesList *-- Challenge
+TrainingPlansList *-- TrainingPlan
+
+User *-- Goal
+User *-- Challenge
+User *-- TrainingPlan
+User *-- RunningLog
+
+RunningLog *-- Run
+Challenge *-- Run
+TrainingPlan *-- Run
+
+Leaderboard *-- User
+
+@enduml
