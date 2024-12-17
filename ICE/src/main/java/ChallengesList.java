@@ -11,7 +11,7 @@ public class ChallengesList {
 
 
     public static void viewAllChallenges() {
-        //
+
     }
 
     public List<Challenge> getAllChallengesList(){

@@ -1,12 +1,9 @@
-import java.util.HashMap;
-
 public class Achievement {
      private int[] achievements = {5000, 10000, 15000, 21100, 42200};
 
     public Achievement(){
 
     }
-
 
     public String checkRunDistance (float distance) {
         String msg = "";

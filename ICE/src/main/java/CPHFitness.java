@@ -261,38 +261,35 @@ public class CPHFitness {
         }
     }
 
-    public void addRun(){
+    public void addRun() {
 
-        int hours = ui.promptNumeric("\uD83D\uDD50Enter hours: ");
-        int minutes = ui.promptNumeric("\uD83D\uDD51Enter minutes: ");
-        int seconds = ui.promptNumeric("\uD83D\uDD52Enter seconds: ");
-        String date = "";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
-
-        while (true) {
-            date = ui.promptText("\uD83D\uDDD3\uFE0FPress Enter for today's date or enter the date of the run (dd/mm/yy): ");
-            if (date == null || date.isEmpty()) {
-                date = LocalDate.now().format(formatter);
-                ui.displayMsg("Using today's date: " + date);
-                break;
-            } else {
-                try {
-                    LocalDate.parse(date, formatter);
-                    break;
-                } catch (DateTimeParseException e) {
-                    ui.displayMsg("❌Invalid date format. Please use dd/mm/yy.");
-                }
-            }
+        int hours = ui.promptNumeric("Enter hours: ");
+        int minutes = ui.promptNumeric("Enter minutes ");
+        int seconds = ui.promptNumeric("Enter seconds: ");
+        String date = ui.promptText("Press 'Enter' for todays date or type the date of the run (dd/mm/yy):");
+        if (date == null || date.isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+            date = LocalDate.now().format(formatter);
+            ui.displayMsg(date);
         }
-        float distance = ui.promptNumeric("\uD83D\uDCCFEnter the distance in meters:");
-        int totalMin = hours*60 + minutes;
-        DatabaseHandler.updateDistanceGoals(currentUser,distance);
+        float distance = ui.promptNumeric("Enter the distance in meters:");
+        int totalMin = hours * 60 + minutes;
+        DatabaseHandler.updateDistanceGoals(currentUser, distance / 1000);
         DatabaseHandler.updateTimeGoals(currentUser, totalMin);
         DatabaseHandler.updateDualGoals(currentUser, totalMin, distance);
+        for (Goal goal : currentUser.getGoalsFromDatabase()) {
+            if (goal.getMinutes() == 0 && goal.getProgress() >= goal.getDistance()) {
+                ui.displayMsg("Congratulations! You have successfully completed one of your goals!");
+            } else if (goal.getDistance() == 0 && goal.getProgress() >= goal.getMinutes()) {
+                ui.displayMsg("Congratulations! You have successfully completed one of your goals!");
+            } else if (goal.getDistance() > 0 && goal.getMinutes() > 0 && goal.getProgress() <= goal.getMinutes()) {
+                ui.displayMsg("Congratulations! You have successfully completed one of your goals!");
+            }
+        }
         Run run = new Run(hours, minutes, seconds, distance, date);
         DatabaseHandler.saveRun(currentUser, run);
-        ui.displayMsg("You just added the run " + run + " to your running log. Good work!\uD83E\uDD29\uD83D\uDC4C");
-        ui.displayMsg(achievement.checkRunDistance(distance));
+        ui.displayMsg("You just added the run " + run + " to your running log. Good work!");
+        mainMenu();
     }
 
     public void logOut(){
