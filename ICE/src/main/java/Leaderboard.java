@@ -4,11 +4,6 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class Leaderboard {
-    private TextUI ui;
-
-    public Leaderboard(){
-
-    }
 
     public void viewLeaderboard() {
 

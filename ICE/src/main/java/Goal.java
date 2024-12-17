@@ -25,7 +25,7 @@ public class Goal {
             return progress + " meters out of " + distance + " meters";
         } else if (distance == 0)
             return (int) progress + " min out " + minutes + " min";
-            return (int) progress + " min out of " + minutes + " min for " + distance + " m";
+        return (int) progress + " min out of " + minutes + " min for " + distance + " m";
         }
 
 

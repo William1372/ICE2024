@@ -12,48 +12,53 @@ class Main{
 class CPHFitness{
 - Connection connection
 - User currentUser
-- TrainingPlansList trainingPlansList
-- ChallengesList challengesList
 - Leaderboard leaderboard
-
+- TextUI ui
 + void startMenu()
 + void mainMenu()
 + void createGoal()
 + void userLogin()
 + User registerUser()
++ void addRun()
++ void logOut()
 + void exitProgram()
 }
 
 class DatabaseHandler {
-+ final String DB_URL
++ {static} final String DB_URL
 - {static} Connection connection
+- {static} TextUI ui
 + {static} Connection connect()
 + {static} void createRunningLogTable(Connection conn)
 + {static} void createGoalTable(Connection conn)
-+ {static} void createChallengeTable (Connection conn)
 + {static} void createUserTable(Connection conn)
 + {static} void saveUser(User user)
 + {static} void saveRun(User user, Run run)
 + {static} void saveGoal (User user, Goal goal)
-
++ {static} void updateDistanceGoals(User user, float progress)
++ {static} void updateTimeGoals(User user, int progress)
++ {static} void updateDualGoals(User user, int time, float distance)
 }
 
-
-
 class User{
-+ User (String, String, int, int, int)
+- int id
 - String username
 - String password
 - int age
 - int height
 - int weight
-- ArrayList <Run> runningLog
+- String gender
+- TextUI ui
++ User (String, String, int, int, int)
++ void updateProfile()
++ void updateWeight(Connection conn)
++ void updateHeight(Connection conn)
 + void viewRunningLog()
++ List<Goal> getGoalsFromDatabase()
 }
 
 class Run{
 + Run(int, int, int, float, String)
-+ Run(int, int, int, float)
 - int hours
 - int minutes
 - int seconds
@@ -61,56 +66,38 @@ class Run{
 - String date
 }
 
-class ChallengesList{
-- ArrayList <Challenge> AllChallengesList
-+ viewAllChallenges()
-}
-
-class TrainingPlansList{
-- ArrayList <TrainingPlan> trainingPlansList
-}
-
 class Goal {
- - float distanceInKm;
- - float distanceProgress;
+ - float distance;
+ - float progress;
  - int minutes;
- + Goal (float distanceInKm, float distanceProgress)
- + Goal (float distanceInKm, int minutes, float distanceProgress)
-}
-
-class Challenge {
-- String name
-- double distance
-- int time
-
-+ Challenge (String name, double distance, int time)
-}
-
-class TrainingPlan {
-
+ + Goal (float distance, float progress)
+ + Goal (float distance, int minutes, float progress)
+ + Goal (int minutes, int progress)
 }
 
 class Leaderboard{
 + void viewLeaderboard()
 }
 
+class TextUI{
+- Scanner scanner
++ void displayMsg(String msg)
++ String promptText(String msg)
++ int promptNumeric(String msg)
+}
+
 Main *-- CPHFitness
 Main *-- DatabaseHandler
 
-CPHFitness *-- User : has-a
-CPHFitness *-- Leaderboard : has-a
-CPHFitness *-- ChallengesList
-CPHFitness *-- TrainingPlansList
+CPHFitness *-- User
+CPHFitness *-- Leaderboard
 CPHFitness *-- DatabaseHandler
-
-ChallengesList *-- Challenge
-TrainingPlansList *-- TrainingPlan
+CPHFitness *-- TextUI
 
 User *-- Goal
-User *-- Challenge
-User *-- TrainingPlan
 User *-- Run
-Challenge *-- Run
-TrainingPlan *-- Run
+User *-- TextUI
+
+DatabaseHandler *-- TextUI
 
 @enduml

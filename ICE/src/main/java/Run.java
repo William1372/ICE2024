@@ -13,13 +13,6 @@ public class Run {
         this.date = date;
     }
 
-    public Run(int hours, int minutes, int seconds, float distance){
-        this.hours = hours;
-        this.minutes = minutes;
-        this.seconds = seconds;
-        this.distance = distance;
-    }
-
     public String toString(){
         if (!date.equals(""))
             return hours + ":" + minutes + ":" + seconds + ", " + distance + " meters" + ", " + date;

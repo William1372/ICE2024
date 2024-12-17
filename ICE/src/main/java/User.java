@@ -13,12 +13,10 @@ public class User {
     private String gender;
     private int height;
     private double weight;
-    private ArrayList<Goal> goalLog;
     private TextUI ui = new TextUI();
     private ArrayList<Challenge> currentChallenges;
     private CPHFitness cphfitness = new CPHFitness();
     private Achievement achievement;
-    private User currentUser;
 
     public User(String username, String password, int age, String gender, int height, double weight) {
         this.username = username;
@@ -27,18 +25,13 @@ public class User {
         this.gender = gender;
         this.height = height;
         this.weight = weight;
-        this.goalLog = new ArrayList<>();
         this.currentChallenges = new ArrayList<>();
-    }
-
-    public void editGoal(Goal goal) {
-
     }
 
     public void updateProfile() {
         int choice = ui.promptNumeric("1) Edit weight⚖\uFE0F \n" +
                 "2) Edit height\uD83D\uDCCF \n" +
-                "3) Return to main menu\uD83D\uDD19");
+                "3) Return to Main Menu\uD83D\uDD19");
 
         Connection connection = DatabaseHandler.getConnection();
 
@@ -56,8 +49,8 @@ public class User {
                     cphfitness.mainMenu();
                     return;
                 default:
-                    cphfitness.mainMenu();
-                    return;
+                    ui.displayMsg("❌Invalid number. Please try again.");
+                    updateProfile();
             }
 
             connection.commit();
@@ -85,12 +78,12 @@ public class User {
             double newWeight = ui.promptNumeric(bold + "Type your updated weight in kg's: ");
             if (newWeight > 0) {
                 ui.displayMsg(bold + "Weight has been updated from: " + weight + "kg., to: " + newWeight + "kg.");
-                this.weight = newWeight;
+                weight = newWeight;
 
                 String updateSql = "UPDATE users SET weight = ? WHERE id = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(updateSql)) {
                     stmt.setDouble(1, newWeight);
-                    stmt.setInt(2, this.id);
+                    stmt.setInt(2, id);
                     int rowsAffected = stmt.executeUpdate();
 
                     if (rowsAffected > 0) {
@@ -119,12 +112,12 @@ public class User {
             int newHeight = ui.promptNumeric(bold + "Type your updated height in cm's: ");
             if (newHeight > 0) {
                 ui.displayMsg(bold + "Height has been updated from: " + height + "cm., to: " + newHeight + "cm.");
-                this.height = newHeight;
+                height = newHeight;
 
                 String updateSql = "UPDATE users SET height = ? WHERE id = ?";
                 try (PreparedStatement stmt = conn.prepareStatement(updateSql)) {
                     stmt.setInt(1, newHeight);
-                    stmt.setInt(2, this.id);
+                    stmt.setInt(2, id);
                     int rowsAffected = stmt.executeUpdate();
 
                     if (rowsAffected > 0) {
@@ -148,7 +141,7 @@ public class User {
     }
 
     public void viewRunningLog() {
-        if (this.id <= 0) {
+        if (id <= 0) {
             ui.displayMsg("Error: User ID not set.");
             return;
         }
@@ -156,7 +149,7 @@ public class User {
         String sql = "SELECT hours, minutes, seconds, distance, date FROM running_log WHERE user_id = ?";
 
         try (PreparedStatement stmt = DatabaseHandler.getConnection().prepareStatement(sql)) {
-            stmt.setInt(1, this.id);  // Brug brugerens ID for at hente løb kun for den bruger
+            stmt.setInt(1, id);  // Brug brugerens ID for at hente løb kun for den bruger
             ResultSet rs = stmt.executeQuery();
 
             if (!rs.next()) {
@@ -205,19 +198,6 @@ public class User {
         }
         return goals;
     }
-
-    public void addGoal(Goal goal){
-        try {
-            goalLog.add(goal);
-        } catch (Exception e) {
-            ui.displayMsg(String.valueOf(e));
-        }
-    }
-
-    public void removeGoal(Goal goal){
-        goalLog.remove(goal);
-    }
-
 
     public ArrayList<Challenge> getCurrentChallenges(){
         return currentChallenges;
@@ -278,9 +258,4 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
-
-    public void save() {
-        DatabaseHandler.saveUser(this);
-    }
-
 }
