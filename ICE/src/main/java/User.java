@@ -282,5 +282,4 @@ public class User {
     public void save() {
         DatabaseHandler.saveUser(this);
     }
-
 }

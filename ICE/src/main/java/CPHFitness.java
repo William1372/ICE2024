@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 
 public class CPHFitness {
@@ -36,7 +35,6 @@ public class CPHFitness {
                 break;
             case 2:
                 currentUser = registerUser();
-                mainMenu();
                 break;
             case 3:
                 exitProgram();
@@ -76,7 +74,7 @@ public class CPHFitness {
                 mainMenu();
                 break;
             case 4:
-                ui.displayMsg("❌The 'trainingplan' feature is currently unavailable!");
+                ui.displayMsg("❌The 'trainingplan' feature is currently unavailable! Pay to unlock");
                 mainMenu();
             case 5:
                 if(!currentUser.getCurrentChallenges().isEmpty()) {
@@ -99,7 +97,7 @@ public class CPHFitness {
                 }
                 mainMenu();
             case 7:
-                ui.displayMsg("❌The 'edit goals' feature is currently unavailable!");
+                ui.displayMsg("❌The 'edit goals' feature is currently unavailable! Pay to unlock");
                 mainMenu();
                 break;
             case 8:
@@ -107,7 +105,7 @@ public class CPHFitness {
                 mainMenu();
                 break;
             case 9:
-                ui.displayMsg("❌The 'achievements' feature is currently unavailable!");
+                ui.displayMsg("❌The 'achievements' feature is currently unavailable! Pay to unlock");
                 mainMenu();
                 break;
             case 10:
@@ -203,7 +201,7 @@ public class CPHFitness {
         }
     }
 
-    public User registerUser() {
+    /* public User registerUser() {
         String username = ui.promptText("\uD83D\uDC68\u200D\uD83D\uDCBB Enter your username:");
         boolean usernameExists = false;
 
@@ -231,9 +229,8 @@ public class CPHFitness {
         int height = ui.promptNumeric("\uD83D\uDCCF Enter your height in cm:");
         double weight = ui.promptNumeric("⚖\uFE0F Enter your weight in kg:");
 
-        User user = new User(username, password, age, gender, height, weight);
-
-        DatabaseHandler.saveUser(user);
+        currentUser = new User(username, password, age, gender, height, weight);
+        DatabaseHandler.saveUser(currentUser);
 
         String sql1 = "SELECT COUNT(*) FROM users WHERE username = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql1)) {
@@ -244,7 +241,64 @@ public class CPHFitness {
         }
         ui.displayMsg("✅User registered successfully!");
         mainMenu();
-        return user;
+        return currentUser;
+    } */
+
+    public User registerUser() {
+        String username = ui.promptText("\uD83D\uDC68\u200D\uD83D\uDCBB Enter your username:");
+        boolean usernameExists = false;
+
+        String checkSql = "SELECT COUNT(*) FROM users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(checkSql)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    usernameExists = rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if (usernameExists) {
+            ui.displayMsg("❌Username already exists. Please choose another.");
+            return registerUser();
+        } else {
+            ui.displayMsg("✅Username is available!");
+        }
+
+        String password = ui.promptText("\uD83E\uDEE3 Enter your password:");
+        int age = ui.promptNumeric("\uD83D\uDC74 \uD83D\uDC75 Enter your age:");
+        String gender = ui.promptText("\uD83D\uDC71\u200D♂\uFE0F\uD83D\uDC71\u200D♀\uFE0F Enter your gender (Male/Female): ");
+        int height = ui.promptNumeric("\uD83D\uDCCF Enter your height in cm:");
+        double weight = ui.promptNumeric("⚖\uFE0F Enter your weight in kg:");
+
+        currentUser = new User(username, password, age, gender, height, weight);
+
+        String insertSql = "INSERT INTO users (username, password, age, gender, height, weight) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            pstmt.setInt(3, age);
+            pstmt.setString(4, gender);
+            pstmt.setInt(5, height);
+            pstmt.setDouble(6, weight);
+            pstmt.executeUpdate();
+
+            try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    int userId = generatedKeys.getInt(1);
+                    currentUser.setId(userId);
+                    ui.displayMsg("✅User registered successfully with ID: " + userId);
+                } else {
+                    ui.displayMsg("❌Failed to retrieve user ID. Please check the database.");
+                }
+            }
+        } catch (SQLException e) {
+            ui.displayMsg("❌Error registering user: " + e.getMessage());
+        }
+        mainMenu();
+        return currentUser;
     }
 
     public void viewCurrentChallenges() {
@@ -274,16 +328,19 @@ public class CPHFitness {
         }
         float distance = ui.promptNumeric("Enter the distance in meters:");
         int totalMin = hours * 60 + minutes;
-        DatabaseHandler.updateDistanceGoals(currentUser, distance / 1000);
+        DatabaseHandler.updateDistanceGoals(currentUser, distance);   //Fjernet /1000 da teksten spørger om meter
         DatabaseHandler.updateTimeGoals(currentUser, totalMin);
         DatabaseHandler.updateDualGoals(currentUser, totalMin, distance);
         for (Goal goal : currentUser.getGoalsFromDatabase()) {
             if (goal.getMinutes() == 0 && goal.getProgress() >= goal.getDistance()) {
                 ui.displayMsg("Congratulations! You have successfully completed one of your goals!");
+                break;
             } else if (goal.getDistance() == 0 && goal.getProgress() >= goal.getMinutes()) {
                 ui.displayMsg("Congratulations! You have successfully completed one of your goals!");
+                break;
             } else if (goal.getDistance() > 0 && goal.getMinutes() > 0 && goal.getProgress() <= goal.getMinutes()) {
                 ui.displayMsg("Congratulations! You have successfully completed one of your goals!");
+                break;
             }
         }
         Run run = new Run(hours, minutes, seconds, distance, date);

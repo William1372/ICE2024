@@ -185,7 +185,6 @@ public class DatabaseHandler {
         } catch (SQLException e) {
             ui.displayMsg("Error saving achievement: " + e.getMessage());
         }
-
     }
      */
 
@@ -199,7 +198,6 @@ public class DatabaseHandler {
             stmt.setFloat(1, progress);
             stmt.setInt(2, user.getId());
             stmt.executeUpdate();
-            ui.displayMsg("Goal updated succesfully.");
         } catch (SQLException e) {
             ui.displayMsg("Error updating goal: " + e.getMessage());
         }
@@ -215,7 +213,6 @@ public class DatabaseHandler {
             stmt.setFloat(1, progress);
             stmt.setInt(2, user.getId());
             stmt.executeUpdate();
-            ui.displayMsg("Goal updated succesfully.");
         } catch (SQLException e) {
             ui.displayMsg("Error updating goal: " + e.getMessage());
         }
@@ -233,7 +230,6 @@ public class DatabaseHandler {
             stmt.setFloat(3, time);
             stmt.setFloat(4, distance);
             stmt.executeUpdate();
-            ui.displayMsg("Goal updated succesfully.");
         } catch (SQLException e) {
             ui.displayMsg("Error updating goal: " + e.getMessage());
         }
